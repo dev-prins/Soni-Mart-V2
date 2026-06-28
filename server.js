@@ -24,7 +24,6 @@ app.get("/", (req, res) => {
   res.send("Soni Mart Server is running fine!");
 });
 
-// प्रोडक्ट जोड़ने का रूट (GET इस्तेमाल किया है)
 app.get("/add-product", async (req, res) => {
   try {
     const newProduct = {
@@ -37,8 +36,8 @@ app.get("/add-product", async (req, res) => {
     const docRef = await db.collection("products").add(newProduct);
     res.status(200).send("Product added successfully with ID: " + docRef.id);
   } catch (error) {
-    console.error("Error:", error);
-    res.status(500).send("Error adding product: " + error.message);
+    console.error("Error details:", error);
+    res.status(500).send("Error: " + error.message);
   }
 });
 
