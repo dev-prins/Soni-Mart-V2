@@ -1,13 +1,13 @@
 const express = require("express");
-const app = express();
 const admin = require("firebase-admin");
+const app = express();
 
-// Firebase को सुरक्षित तरीके से इनिशियलाइज़ करना
+// 1. Firebase सबसे पहले Initialize करें
 try {
   admin.initializeApp({
     credential: admin.credential.cert({
       project_id: process.env.FIREBASE_PROJECT_ID,
-      private_key: process.env.FIREBASE_PRIVATE_KEY ? process.env.FIREBASE_PRIVATE_KEY.replace(/\\n/g, '\n') : '',
+      private_key: process.env.FIREBASE_PRIVATE_KEY.replace(/\\n/g, '\n'),
       client_email: process.env.FIREBASE_CLIENT_EMAIL,
     })
   });
@@ -16,21 +16,23 @@ try {
   console.error("Firebase Initialization Failed:", err);
 }
 
+// 2. Initialize होने के बाद ही Firestore का इंस्टेंस बनाएं
 const db = admin.firestore();
+
 app.use(express.json());
 
+// रूट जो सही काम करे
 app.get("/add-product", async (req, res) => {
   try {
     const newProduct = {
       name: "Soni Phone",
       price: 15000,
-      category: "Electronics",
       addedAt: new Date()
     };
     const docRef = await db.collection("products").add(newProduct);
-    res.status(200).send("Product added successfully! ID: " + docRef.id);
+    res.status(200).send("Product added! ID: " + docRef.id);
   } catch (error) {
-    res.status(500).send("Error adding product: " + error.message);
+    res.status(500).send("Error: " + error.message);
   }
 });
 
