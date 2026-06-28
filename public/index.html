@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="hi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Soni Mart - Login</title>
+    <style>
+        body { font-family: sans-serif; text-align: center; padding: 50px; }
+        input { display: block; margin: 10px auto; padding: 10px; width: 80%; max-width: 300px; }
+        button { padding: 10px 20px; background: green; color: white; border: none; cursor: pointer; border-radius: 5px; }
+    </style>
+</head>
+<body>
+    <h1>Soni Mart Login</h1>
+    <input type="email" id="email" placeholder="Email">
+    <input type="password" id="password" placeholder="Password">
+    <button onclick="login()">Login</button>
+
+    <script>
+        async function login() {
+            const email = document.getElementById('email').value;
+            const password = document.getElementById('password').value;
+
+            try {
+                const response = await fetch('/api/auth/login', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ email, password })
+                });
+
+                const data = await response.json();
+                alert(data.message || "Login successful!");
+            } catch (error) {
+                console.error("Error:", error);
+                alert("Server se connect nahi ho pa raha hai.");
+            }
+        }
+    </script>
+</body>
+</html>
