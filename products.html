@@ -3,29 +3,21 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Soni Mart | Fast Delivery</title>
+    <title>Soni Mart | Professional Store</title>
     <style>
         :root { --primary: #28a745; --accent: #ffc107; --bg: #f8f9fa; }
-        body { font-family: 'Segoe UI', sans-serif; background: var(--bg); margin: 0; padding-bottom: 70px; }
-        
-        /* Header & Navbar */
+        body { font-family: 'Segoe UI', sans-serif; background: var(--bg); margin: 0; padding-bottom: 80px; }
         .header { background: white; padding: 15px; display: flex; justify-content: space-between; align-items: center; position: sticky; top: 0; z-index: 100; box-shadow: 0 2px 5px rgba(0,0,0,0.1); }
-        .logo { font-weight: bold; font-size: 20px; color: var(--primary); }
-        
-        /* Product Layout */
-        .category-bar { display: flex; overflow-x: auto; padding: 10px; gap: 10px; background: white; }
-        .cat-item { padding: 8px 15px; border-radius: 20px; background: #eee; cursor: pointer; white-space: nowrap; }
+        .logo { font-weight: bold; font-size: 22px; color: var(--primary); }
+        .category-bar { display: flex; overflow-x: auto; padding: 15px; gap: 10px; background: white; }
+        .cat-item { padding: 8px 16px; border-radius: 20px; background: #e9ecef; cursor: pointer; white-space: nowrap; font-size: 14px; }
         .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; padding: 15px; }
-        .card { background: white; border-radius: 12px; padding: 12px; text-align: center; border: 1px solid #eee; }
-        .card img { width: 100%; height: 100px; object-fit: contain; }
-        
-        /* Buttons */
+        .card { background: white; border-radius: 12px; padding: 12px; text-align: center; border: 1px solid #eee; transition: 0.3s; }
+        .card img { width: 100%; height: 120px; object-fit: contain; margin-bottom: 10px; }
         .btn { padding: 10px; border: none; border-radius: 8px; cursor: pointer; font-weight: bold; width: 100%; }
         .btn-add { background: var(--primary); color: white; }
-        .btn-checkout { background: var(--accent); color: #000; position: fixed; bottom: 20px; width: 90%; left: 5%; padding: 15px; }
-        
-        /* Admin */
-        .admin-section { padding: 20px; background: #fff3cd; margin: 15px; border-radius: 10px; }
+        .btn-checkout { background: var(--accent); position: fixed; bottom: 20px; width: 92%; left: 4%; padding: 15px; font-size: 16px; }
+        .admin-section { padding: 20px; background: #fff; margin: 15px; border-radius: 12px; box-shadow: 0 2px 5px rgba(0,0,0,0.05); }
     </style>
 </head>
 <body>
@@ -44,18 +36,18 @@
 <div id="product-list" class="grid"></div>
 
 <div class="admin-section">
-    <h3>Admin Control</h3>
-    <input type="text" id="pName" placeholder="Name">
-    <input type="number" id="pPrice" placeholder="Price">
-    <input type="text" id="pImg" placeholder="Image URL">
+    <h3>⚙️ Admin Panel</h3>
+    <input type="text" id="pName" placeholder="Name" style="width:90%; padding:8px; margin-bottom:5px;">
+    <input type="number" id="pPrice" placeholder="Price" style="width:90%; padding:8px; margin-bottom:5px;">
     <button class="btn btn-add" onclick="addProduct()">Add Product</button>
 </div>
 
-<button class="btn btn-checkout" onclick="checkout()">Proceed to Checkout (WhatsApp)</button>
+<button class="btn btn-checkout" onclick="sendEmail()">Proceed to Checkout (via Email)</button>
 
 <script>
     let cart = [];
     const API = "https://soni-mart-web.onrender.com";
+    const ADMIN_EMAIL = "prinsplayhelp@gmail.com"; // आपकी आधिकारिक ईमेल
 
     async function fetchProducts() {
         const res = await fetch(`${API}/get-products`);
@@ -68,8 +60,8 @@
         list.innerHTML = products.map(p => `
             <div class="card">
                 <img src="${p.image || 'https://via.placeholder.com/100'}">
-                <p>${p.name}</p>
-                <p><strong>₹${p.price}</strong></p>
+                <p style="margin:5px 0; font-weight:600;">${p.name}</p>
+                <p style="margin:5px 0; color:#555;">₹${p.price}</p>
                 <button class="btn btn-add" onclick="addToCart('${p.name}', ${p.price})">Add</button>
             </div>
         `).join('');
@@ -78,16 +70,17 @@
     function addToCart(name, price) {
         cart.push({name, price});
         document.getElementById('cart-count').innerText = cart.length;
-        alert(name + " added!");
     }
 
-    function checkout() {
-        const msg = "New Order: " + cart.map(i => i.name).join(", ") + ". Total: ₹" + cart.reduce((s, i) => s + i.price, 0);
-        window.open(`https://wa.me/91YOURNUMBER?text=${encodeURIComponent(msg)}`, '_blank');
+    function sendEmail() {
+        if(cart.length === 0) return alert("Cart is empty!");
+        const subject = "New Order from Soni Mart";
+        const body = "Order Details: " + cart.map(i => i.name).join(", ") + " | Total: ₹" + cart.reduce((s, i) => s + i.price, 0);
+        window.location.href = `mailto:${ADMIN_EMAIL}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
     }
 
     async function addProduct() {
-        const data = { name: document.getElementById('pName').value, price: document.getElementById('pPrice').value, image: document.getElementById('pImg').value };
+        const data = { name: document.getElementById('pName').value, price: document.getElementById('pPrice').value };
         await fetch(`${API}/add-product`, { method: "POST", headers: {"Content-Type":"application/json"}, body: JSON.stringify(data) });
         fetchProducts();
     }
