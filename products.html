@@ -3,124 +3,93 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Soni Mart - Ultimate Store</title>
+    <title>Soni Mart | Fast Delivery</title>
     <style>
-        body { font-family: 'Segoe UI', sans-serif; padding: 20px; background: #f0f2f5; }
-        .container { max-width: 900px; margin: auto; }
-        .card { background: white; padding: 20px; border-radius: 12px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); margin-bottom: 20px; }
-        .product-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 20px; }
-        .product-card { background: white; padding: 15px; border-radius: 10px; border: 1px solid #ddd; text-align: center; }
-        .product-card img { width: 100%; height: 150px; object-fit: cover; border-radius: 8px; margin-bottom: 10px; }
-        input, button { padding: 10px; margin: 5px; border-radius: 5px; border: 1px solid #ccc; width: 90%; }
-        .btn-add { background: #28a745; color: white; border: none; cursor: pointer; }
-        .btn-del { background: #dc3545; color: white; border: none; cursor: pointer; }
-        .hidden { display: none; }
+        :root { --primary: #28a745; --accent: #ffc107; --bg: #f8f9fa; }
+        body { font-family: 'Segoe UI', sans-serif; background: var(--bg); margin: 0; padding-bottom: 70px; }
+        
+        /* Header & Navbar */
+        .header { background: white; padding: 15px; display: flex; justify-content: space-between; align-items: center; position: sticky; top: 0; z-index: 100; box-shadow: 0 2px 5px rgba(0,0,0,0.1); }
+        .logo { font-weight: bold; font-size: 20px; color: var(--primary); }
+        
+        /* Product Layout */
+        .category-bar { display: flex; overflow-x: auto; padding: 10px; gap: 10px; background: white; }
+        .cat-item { padding: 8px 15px; border-radius: 20px; background: #eee; cursor: pointer; white-space: nowrap; }
+        .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; padding: 15px; }
+        .card { background: white; border-radius: 12px; padding: 12px; text-align: center; border: 1px solid #eee; }
+        .card img { width: 100%; height: 100px; object-fit: contain; }
+        
+        /* Buttons */
+        .btn { padding: 10px; border: none; border-radius: 8px; cursor: pointer; font-weight: bold; width: 100%; }
+        .btn-add { background: var(--primary); color: white; }
+        .btn-checkout { background: var(--accent); color: #000; position: fixed; bottom: 20px; width: 90%; left: 5%; padding: 15px; }
+        
+        /* Admin */
+        .admin-section { padding: 20px; background: #fff3cd; margin: 15px; border-radius: 10px; }
     </style>
 </head>
 <body>
 
-<div class="container">
-    <!-- Admin Section -->
-    <div class="card" id="login-section">
-        <h2>🔐 Admin Panel</h2>
-        <input type="password" id="adminPass" placeholder="Enter Password">
-        <button onclick="checkAdmin()">Login</button>
-    </div>
-
-    <div class="card hidden" id="admin-controls">
-        <h2>⚙️ Manage Products</h2>
-        <input type="text" id="pName" placeholder="Product Name">
-        <input type="number" id="pPrice" placeholder="Price">
-        <input type="text" id="pCat" placeholder="Category">
-        <input type="text" id="pImg" placeholder="Image URL">
-        <button class="btn-add" onclick="addProduct()">Add Product</button>
-        <button onclick="logout()">Logout</button>
-    </div>
-
-    <!-- Cart -->
-    <div class="card">
-        <h2>🛒 My Cart</h2>
-        <div id="cart-items">No items in cart.</div>
-        <p><strong>Total: ₹ <span id="cart-total">0</span></strong></p>
-        <a id="whatsapp-link" href="#" class="hidden" target="_blank" style="padding:10px; background:#25d366; color:white; text-decoration:none; border-radius:5px; display:block; text-align:center;">Order via WhatsApp</a>
-    </div>
-
-    <input type="text" id="searchInput" placeholder="Search products..." onkeyup="filterProducts()" style="width: 95%; padding: 10px;">
-    <h1>Store Products</h1>
-    <div class="product-grid" id="product-list">Loading...</div>
+<div class="header">
+    <div class="logo">Soni Mart</div>
+    <div>🛒 <span id="cart-count">0</span></div>
 </div>
 
+<div class="category-bar">
+    <div class="cat-item" onclick="filterProducts('All')">All</div>
+    <div class="cat-item" onclick="filterProducts('Fruits')">Fruits</div>
+    <div class="cat-item" onclick="filterProducts('Vegetables')">Vegetables</div>
+</div>
+
+<div id="product-list" class="grid"></div>
+
+<div class="admin-section">
+    <h3>Admin Control</h3>
+    <input type="text" id="pName" placeholder="Name">
+    <input type="number" id="pPrice" placeholder="Price">
+    <input type="text" id="pImg" placeholder="Image URL">
+    <button class="btn btn-add" onclick="addProduct()">Add Product</button>
+</div>
+
+<button class="btn btn-checkout" onclick="checkout()">Proceed to Checkout (WhatsApp)</button>
+
 <script>
-    let allProducts = [], cart = [];
+    let cart = [];
     const API = "https://soni-mart-web.onrender.com";
 
     async function fetchProducts() {
         const res = await fetch(`${API}/get-products`);
-        allProducts = await res.json();
-        render(allProducts);
+        const data = await res.json();
+        render(data);
     }
 
-    function render(arr) {
+    function render(products) {
         const list = document.getElementById("product-list");
-        list.innerHTML = arr.map(p => `
-            <div class="product-card">
-                <img src="${p.image || 'https://via.placeholder.com/150'}" alt="${p.name}">
-                <h3>${p.name}</h3>
-                <p>₹ ${p.price}</p>
-                <button onclick="addToCart('${p.name}', ${p.price})">Add to Cart</button>
-                <button class="btn-del admin-only hidden" onclick="deleteProduct('${p.id}')">Delete</button>
+        list.innerHTML = products.map(p => `
+            <div class="card">
+                <img src="${p.image || 'https://via.placeholder.com/100'}">
+                <p>${p.name}</p>
+                <p><strong>₹${p.price}</strong></p>
+                <button class="btn btn-add" onclick="addToCart('${p.name}', ${p.price})">Add</button>
             </div>
         `).join('');
     }
 
-    function checkAdmin() {
-        if(document.getElementById("adminPass").value === "soni123") {
-            document.getElementById("admin-controls").classList.remove("hidden");
-            document.getElementById("login-section").classList.add("hidden");
-            document.querySelectorAll(".admin-only").forEach(el => el.classList.remove("hidden"));
-        } else alert("Wrong Password!");
-    }
-
-    function logout() { location.reload(); }
-
     function addToCart(name, price) {
-        let item = cart.find(i => i.name === name);
-        item ? item.qty++ : cart.push({ name, price, qty: 1 });
-        updateCart();
+        cart.push({name, price});
+        document.getElementById('cart-count').innerText = cart.length;
+        alert(name + " added!");
     }
 
-    function updateCart() {
-        const list = document.getElementById("cart-items");
-        const total = document.getElementById("cart-total");
-        list.innerHTML = cart.map(i => `${i.name} (x${i.qty}) - ₹${i.price * i.qty}`).join("<br>");
-        const sum = cart.reduce((s, i) => s + (i.price * i.qty), 0);
-        total.innerText = sum;
-        const link = document.getElementById("whatsapp-link");
-        if(sum > 0) {
-            link.classList.remove("hidden");
-            link.href = `https://wa.me/91YOURNUMBER?text=Order: ${cart.map(i => i.name+' x'+i.qty).join(', ')}. Total: ₹${sum}`;
-        }
+    function checkout() {
+        const msg = "New Order: " + cart.map(i => i.name).join(", ") + ". Total: ₹" + cart.reduce((s, i) => s + i.price, 0);
+        window.open(`https://wa.me/91YOURNUMBER?text=${encodeURIComponent(msg)}`, '_blank');
     }
 
     async function addProduct() {
-        const data = { 
-            name: document.getElementById("pName").value, 
-            price: document.getElementById("pPrice").value, 
-            category: document.getElementById("pCat").value,
-            image: document.getElementById("pImg").value
-        };
-        await fetch(`${API}/add-product`, { method: "POST", headers: {"Content-Type": "application/json"}, body: JSON.stringify(data) });
+        const data = { name: document.getElementById('pName').value, price: document.getElementById('pPrice').value, image: document.getElementById('pImg').value };
+        await fetch(`${API}/add-product`, { method: "POST", headers: {"Content-Type":"application/json"}, body: JSON.stringify(data) });
         fetchProducts();
-    }
-
-    async function deleteProduct(id) {
-        await fetch(`${API}/delete-product/${id}`, { method: 'DELETE' });
-        fetchProducts();
-    }
-
-    function filterProducts() {
-        const query = document.getElementById("searchInput").value.toLowerCase();
-        render(allProducts.filter(p => p.name.toLowerCase().includes(query)));
     }
 
     fetchProducts();
