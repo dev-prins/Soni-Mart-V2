@@ -2,7 +2,7 @@ const express = require("express");
 const app = express();
 const admin = require("firebase-admin");
 
-// 1. Firebase इनिशियलाइज़ेशन
+// 1. Firebase इनिशियलाइज़ेशन (Environment variables के साथ)
 try {
   admin.initializeApp({
     credential: admin.credential.cert({
@@ -24,15 +24,35 @@ try {
   console.error("Firebase Initialization Failed:", err);
 }
 
+// Firestore का इंस्टेंस
+const db = admin.firestore();
+
 // 2. बेसिक मिडलवेयर
 app.use(express.json());
 
-// 3. एक टेस्ट रूट (ताकि पता चले सर्वर चल रहा है)
+// 3. टेस्ट रूट
 app.get("/", (req, res) => {
   res.send("Soni Mart Server is running fine!");
 });
 
-// 4. पोर्ट सेटअप (रेंडर के लिए सबसे जरूरी)
+// 4. प्रोडक्ट जोड़ने का रूट (Database Test)
+app.post("/add-product", async (req, res) => {
+  try {
+    const newProduct = {
+      name: "Soni Phone",
+      price: 15000,
+      category: "Electronics",
+      addedAt: new Date()
+    };
+
+    const docRef = await db.collection("products").add(newProduct);
+    res.status(200).send("Product added successfully with ID: " + docRef.id);
+  } catch (error) {
+    res.status(500).send("Error adding product: " + error.message);
+  }
+});
+
+// 5. पोर्ट सेटअप
 const PORT = process.env.PORT || 10000;
 app.listen(PORT, () => {
   console.log(`Server is running smoothly on port ${PORT}`);
