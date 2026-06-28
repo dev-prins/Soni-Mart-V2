@@ -1,18 +1,27 @@
 const express = require('express');
-const mongoose = require('mongoose');
 const cors = require('cors');
 require('dotenv').config();
+const connectDB = require('./config/db');
 
 const app = express();
+
+// 1. डेटाबेस कनेक्ट करें
+connectDB();
+
+// 2. मिडलवेयर
 app.use(cors());
 app.use(express.json());
 
-mongoose.connect(process.env.MONGO_URI)
-  .then(() => console.log("DB Connected"))
-  .catch(err => console.log(err));
+// 3. राउट्स (Auth Routes)
+app.use('/api/auth', require('./routes/authRoutes'));
 
-app.get('/', (req, res) => res.send("Soni Mart V2 API is running..."));
+// 4. बेसिक रूट
+app.get('/', (req, res) => {
+    res.send("Soni Mart V2 Backend is Active and Running!");
+});
 
+// 5. पोर्ट सेटअप
 const PORT = process.env.PORT || 5000;
-app.listen(PORT, () => console.log(`Server started on port ${PORT}`));
-
+app.listen(PORT, () => {
+    console.log(`Server running on port ${PORT}`);
+});
