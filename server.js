@@ -1,12 +1,12 @@
 const express = require("express");
-const cors = require("cors"); // नया पैकेज
+const cors = require("cors");
 const app = express();
 const admin = require("firebase-admin");
 
-app.use(cors()); // CORS इनेबल करें
+app.use(cors());
 app.use(express.json());
 
-// Firebase इनिशियलाइज़ेशन (आपका कोड सही है)
+// Firebase इनिशियलाइज़ेशन
 try {
   const privateKey = process.env.FIREBASE_PRIVATE_KEY ? process.env.FIREBASE_PRIVATE_KEY.replace(/\\n/g, '\n') : '';
   admin.initializeApp({
@@ -23,11 +23,12 @@ try {
 
 const db = admin.firestore();
 
-// रूट वैसे ही रखें
+// होम पेज
 app.get("/", (req, res) => {
   res.send("Soni Mart Server is running!");
 });
 
+// 1. प्रोडक्ट जोड़ने का रूट (POST)
 app.post("/add-product", async (req, res) => {
   try {
     const { name, price } = req.body;
@@ -42,11 +43,23 @@ app.post("/add-product", async (req, res) => {
   }
 });
 
+// 2. सभी प्रोडक्ट देखने का रूट (GET)
 app.get("/get-products", async (req, res) => {
   try {
     const snapshot = await db.collection("products").get();
     const products = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
     res.status(200).json(products);
+  } catch (error) {
+    res.status(500).send({ error: error.message });
+  }
+});
+
+// 3. प्रोडक्ट डिलीट करने का रूट (DELETE)
+app.delete("/delete-product/:id", async (req, res) => {
+  try {
+    const productId = req.params.id;
+    await db.collection("products").doc(productId).delete();
+    res.status(200).send({ message: "Product deleted successfully!" });
   } catch (error) {
     res.status(500).send({ error: error.message });
   }
