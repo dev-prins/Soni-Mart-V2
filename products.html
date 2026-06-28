@@ -5,109 +5,93 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Soni Mart | Official Store</title>
     <style>
-        :root { --primary: #28a745; --accent: #ffc107; --bg: #f8f9fa; }
-        body { font-family: 'Segoe UI', sans-serif; background: var(--bg); margin: 0; padding-bottom: 90px; }
+        /* --- 1. SETTINGS (भविष्य में यहीं से बदलें) --- */
+        :root {
+            --primary: #28a745; /* मुख्य हरा रंग */
+            --accent: #ffc107;  /* बटन पीला रंग */
+            --bg: #f8f9fa;      /* पेज बैकग्राउंड */
+        }
         
-        /* Header */
+        /* --- 2. STYLE (UI डिजाइन) --- */
+        body { font-family: 'Segoe UI', sans-serif; background: var(--bg); margin: 0; padding-bottom: 90px; }
         .header { background: white; padding: 15px; display: flex; justify-content: space-between; align-items: center; position: sticky; top: 0; z-index: 100; box-shadow: 0 2px 5px rgba(0,0,0,0.1); }
         .logo { font-weight: bold; font-size: 22px; color: var(--primary); }
-        
-        /* Categories */
-        .category-bar { display: flex; overflow-x: auto; padding: 15px; gap: 10px; background: white; }
-        .cat-item { padding: 8px 16px; border-radius: 20px; background: #e9ecef; cursor: pointer; white-space: nowrap; font-size: 14px; }
-        
-        /* Product Grid */
         .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; padding: 15px; }
         .card { background: white; border-radius: 12px; padding: 12px; text-align: center; border: 1px solid #eee; }
         .card img { width: 100%; height: 120px; object-fit: contain; margin-bottom: 10px; }
-        
-        /* Admin & Checkout */
-        .admin-section { padding: 20px; background: #fff; margin: 15px; border-radius: 12px; border: 1px dashed #28a745; }
-        .btn { padding: 12px; border: none; border-radius: 8px; cursor: pointer; font-weight: bold; width: 100%; margin-top: 5px; }
-        .btn-add { background: var(--primary); color: white; }
-        .btn-checkout { background: var(--accent); position: fixed; bottom: 15px; width: 92%; left: 4%; font-size: 16px; box-shadow: 0 -2px 10px rgba(0,0,0,0.1); }
+        .btn-add { background: var(--primary); color: white; border: none; padding: 8px 15px; border-radius: 5px; cursor: pointer; width: 100%; }
+        .admin-section { padding: 20px; background: #fff; margin: 15px; border-radius: 12px; border: 2px dashed var(--primary); }
+        .btn-checkout { background: var(--accent); position: fixed; bottom: 15px; width: 92%; left: 4%; padding: 15px; border-radius: 8px; font-weight: bold; border: none; cursor: pointer; box-shadow: 0 4px 10px rgba(0,0,0,0.2); }
     </style>
 </head>
 <body>
 
-<div class="header">
-    <div class="logo">Soni Mart</div>
-    <div>🛒 <span id="cart-count">0</span></div>
-</div>
+    <!-- Header -->
+    <div class="header">
+        <div class="logo">Soni Mart</div>
+        <div>🛒 <span id="cart-count">0</span></div>
+    </div>
 
-<div class="category-bar">
-    <div class="cat-item" onclick="filterProducts('All')">All</div>
-    <div class="cat-item" onclick="filterProducts('Fruits')">Fruits</div>
-    <div class="cat-item" onclick="filterProducts('Vegetables')">Vegetables</div>
-</div>
+    <!-- Product Display -->
+    <div id="product-list" class="grid"></div>
 
-<input type="text" id="search" placeholder="🔍 Search Products..." style="width:90%; margin:10px 5%; padding:10px; border-radius:8px; border:1px solid #ccc;" onkeyup="filterProducts()">
+    <!-- Admin Section -->
+    <div class="admin-section">
+        <h3>⚙️ Admin Panel</h3>
+        <input type="text" id="pName" placeholder="Name" style="width:90%; padding:8px;">
+        <input type="number" id="pPrice" placeholder="Price" style="width:90%; padding:8px; margin-top:5px;">
+        <input type="text" id="pImg" placeholder="Image URL" style="width:90%; padding:8px; margin-top:5px;">
+        <button class="btn-add" style="margin-top:10px;" onclick="addProduct()">Add Product</button>
+    </div>
 
-<div id="product-list" class="grid"></div>
+    <!-- Checkout -->
+    <button class="btn-checkout" onclick="checkout()">Proceed to Checkout (Email Order)</button>
 
-<!-- Admin Section -->
-<div class="admin-section">
-    <h3>⚙️ Admin Control</h3>
-    <input type="text" id="pName" placeholder="Product Name" style="width:90%; padding:8px;">
-    <input type="number" id="pPrice" placeholder="Price" style="width:90%; padding:8px; margin-top:5px;">
-    <input type="text" id="pImg" placeholder="Image URL" style="width:90%; padding:8px; margin-top:5px;">
-    <button class="btn btn-add" onclick="addProduct()">Add Product</button>
-</div>
+    <!-- --- 3. LOGIC (JavaScript) --- -->
+    <script>
+        // सेटिंग्स
+        const API = "https://soni-mart-web.onrender.com";
+        const ADMIN_EMAIL = "prinsplayhelp@gmail.com"; 
+        let cart = [];
 
-<button class="btn btn-checkout" onclick="checkout()">Proceed to Checkout (Email: prinsplayhelp@gmail.com)</button>
+        async function fetchData() {
+            const res = await fetch(`${API}/get-products`);
+            const arr = await res.json();
+            const list = document.getElementById("product-list");
+            list.innerHTML = arr.map(p => `
+                <div class="card">
+                    <img src="${p.image || 'https://via.placeholder.com/100'}">
+                    <p style="font-weight:bold;">${p.name}</p>
+                    <p>₹${p.price}</p>
+                    <button class="btn-add" onclick="addToCart('${p.name}', ${p.price})">Add</button>
+                </div>
+            `).join('');
+        }
 
-<script>
-    let allProducts = [], cart = [];
-    const API = "https://soni-mart-web.onrender.com";
+        function addToCart(name, price) {
+            cart.push({name, price});
+            document.getElementById('cart-count').innerText = cart.length;
+        }
 
-    async function fetchData() {
-        const res = await fetch(`${API}/get-products`);
-        allProducts = await res.json();
-        render(allProducts);
-    }
+        function checkout() {
+            if(cart.length === 0) return alert("Cart is empty!");
+            const body = "Order Items: " + cart.map(i => i.name).join(", ") + " | Total: ₹" + cart.reduce((s, i) => s + i.price, 0);
+            window.location.href = `mailto:${ADMIN_EMAIL}?subject=New Order!&body=${encodeURIComponent(body)}`;
+        }
 
-    function render(arr) {
-        const list = document.getElementById("product-list");
-        list.innerHTML = arr.map(p => `
-            <div class="card">
-                <img src="${p.image || 'https://via.placeholder.com/100'}">
-                <p style="font-weight:600;">${p.name}</p>
-                <p><strong>₹${p.price}</strong></p>
-                <button class="btn btn-add" onclick="addToCart('${p.name}', ${p.price})">Add</button>
-            </div>
-        `).join('');
-    }
-
-    function addToCart(name, price) {
-        cart.push({name, price});
-        document.getElementById('cart-count').innerText = cart.length;
-    }
-
-    function checkout() {
-        if(cart.length === 0) return alert("Cart is empty!");
-        const body = "Order Items: " + cart.map(i => i.name).join(", ") + " | Total: ₹" + cart.reduce((s, i) => s + i.price, 0);
-        window.location.href = `mailto:prinsplayhelp@gmail.com?subject=New Order!&body=${encodeURIComponent(body)}`;
-    }
-
-    async function addProduct() {
-        await fetch(`${API}/add-product`, { 
-            method: "POST", 
-            headers: {"Content-Type":"application/json"}, 
-            body: JSON.stringify({ 
+        async function addProduct() {
+            const data = { 
                 name: document.getElementById('pName').value, 
                 price: document.getElementById('pPrice').value, 
                 image: document.getElementById('pImg').value 
-            }) 
-        });
+            };
+            await fetch(`${API}/add-product`, { 
+                method: "POST", headers: {"Content-Type":"application/json"}, body: JSON.stringify(data) 
+            });
+            fetchData();
+        }
+
         fetchData();
-    }
-
-    function filterProducts() {
-        const q = document.getElementById("search").value.toLowerCase();
-        render(allProducts.filter(p => p.name.toLowerCase().includes(q)));
-    }
-
-    fetchData();
-</script>
+    </script>
 </body>
 </html>
