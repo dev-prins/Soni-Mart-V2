@@ -2,10 +2,8 @@ const express = require("express");
 const app = express();
 const admin = require("firebase-admin");
 
-// 1. Firebase इनिशियलाइज़ेशन
+// Firebase इनिशियलाइज़ेशन
 try {
-  // रेंडर में 'FIREBASE_PRIVATE_KEY' वेरिएबल में की पेस्ट करें
-  // रेंडर में लाइन ब्रेक (\n) की समस्या को हल करने के लिए:
   const privateKey = process.env.FIREBASE_PRIVATE_KEY ? process.env.FIREBASE_PRIVATE_KEY.replace(/\\n/g, '\n') : '';
 
   admin.initializeApp({
@@ -23,20 +21,32 @@ try {
 const db = admin.firestore();
 app.use(express.json());
 
-// 2. होम पेज के लिए रूट (ताकि 'Cannot GET /' न आए)
+// होम पेज रूट
 app.get("/", (req, res) => {
   res.send("Soni Mart Server is running!");
 });
 
-// 3. प्रोडक्ट जोड़ने का रूट
-app.get("/add-product", async (req, res) => {
+// 1. प्रोडक्ट जोड़ने का रूट (POST)
+app.post("/add-product", async (req, res) => {
   try {
+    const { name, price } = req.body;
     const docRef = await db.collection("products").add({
-      name: "Soni Phone",
-      price: 15000,
+      name: name,
+      price: price,
       addedAt: new Date()
     });
     res.status(200).send("Product added with ID: " + docRef.id);
+  } catch (error) {
+    res.status(500).send("Error: " + error.message);
+  }
+});
+
+// 2. सभी प्रोडक्ट देखने का रूट (GET)
+app.get("/get-products", async (req, res) => {
+  try {
+    const snapshot = await db.collection("products").get();
+    const products = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+    res.status(200).json(products);
   } catch (error) {
     res.status(500).send("Error: " + error.message);
   }
