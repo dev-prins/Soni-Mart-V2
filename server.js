@@ -1,28 +1,33 @@
 const express = require("express");
 const app = express();
 const admin = require("firebase-admin");
-const path = require("path");
-const fs = require("fs");
 
-// Secret File से सर्विस अकाउंट लोड करना
-const serviceAccountPath = path.join(process.cwd(), 'serviceAccountKey.json');
-const serviceAccount = JSON.parse(fs.readFileSync(serviceAccountPath, 'utf8'));
-
-admin.initializeApp({
-  credential: admin.credential.cert(serviceAccount)
-});
-
-console.log("Firebase Admin Initialized Successfully!");
+// Firebase इनिशियलाइज़ेशन (Environment Variable से सीधे)
+try {
+  // सुनिश्चित करें कि रेंडर में FIREBASE_CONFIG नाम का वेरिएबल हो 
+  // या नीचे वाला तरीका अपनाएं:
+  admin.initializeApp({
+    credential: admin.credential.cert({
+      project_id: process.env.FIREBASE_PROJECT_ID,
+      private_key: process.env.FIREBASE_PRIVATE_KEY.replace(/\\n/g, '\n'),
+      client_email: process.env.FIREBASE_CLIENT_EMAIL,
+    })
+  });
+  console.log("Firebase Admin Initialized Successfully!");
+} catch (err) {
+  console.error("Firebase Initialization Failed:", err);
+}
 
 const db = admin.firestore();
 app.use(express.json());
 
-app.get("/", (req, res) => res.send("Soni Mart Server is running!"));
-
 app.get("/add-product", async (req, res) => {
   try {
-    const newProduct = { name: "Soni Phone", price: 15000, addedAt: new Date() };
-    const docRef = await db.collection("products").add(newProduct);
+    const docRef = await db.collection("products").add({
+      name: "Soni Phone",
+      price: 15000,
+      addedAt: new Date()
+    });
     res.status(200).send("Product added! ID: " + docRef.id);
   } catch (error) {
     res.status(500).send("Error: " + error.message);
