@@ -1,110 +1,79 @@
 <!DOCTYPE html>
-<html lang="hi">
+<html lang="hi" class="light">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Soni Mart | Official Enterprise App</title>
+    <title>Soni Mart | Pro App</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
-        :root { --primary: #FACC15; }
-        .bg-primary { background-color: var(--primary); }
-        .text-primary { color: var(--primary); }
-        .hide { display: none; }
-        .section { transition: all 0.3s ease; }
+        body { background: #ffffff !important; color: #000 !important; font-family: 'Segoe UI', sans-serif; }
+        .tab-pane { display: none; }
+        .active-tab { display: block; }
     </style>
 </head>
-<body class="bg-gray-50 font-sans">
+<body class="pb-28">
 
-    <!-- 1. LOGIN SCREEN -->
-    <div id="login-section" class="section fixed inset-0 bg-white z-[100] flex flex-col items-center justify-center p-6">
-        <h1 class="text-5xl font-black mb-10">SONI <span class="text-primary">MART</span></h1>
-        <input type="tel" placeholder="Mobile Number" class="w-full p-4 border-2 border-gray-200 rounded-2xl mb-4">
-        <button onclick="showApp()" class="w-full bg-black text-white p-4 rounded-2xl font-bold">LOGIN / SIGNUP</button>
-    </div>
-
-    <!-- 2. MAIN APP CONTENT -->
-    <div id="main-app" class="section hide pb-24">
-        <!-- Navbar -->
-        <header class="bg-white p-4 sticky top-0 shadow-sm z-50 flex justify-between items-center">
-            <h2 class="text-xl font-black">SONI MART</h2>
-            <button onclick="toggleSection('profile-section')" class="text-2xl"><i class="fas fa-user-circle"></i></button>
-        </header>
-
-        <!-- Categories -->
-        <div class="flex gap-2 p-4 overflow-x-auto">
-            <button onclick="filter('All')" class="px-5 py-2 bg-black text-white rounded-full">All</button>
-            <button onclick="filter('Fruits')" class="px-5 py-2 bg-white border rounded-full">Fruits</button>
-            <button onclick="filter('Vegetables')" class="px-5 py-2 bg-white border rounded-full">Vegetables</button>
+    <!-- Header -->
+    <header class="p-4 border-b sticky top-0 bg-white z-50">
+        <div class="flex justify-between items-center">
+            <h1 class="text-2xl font-black">SONI<span class="text-yellow-500">MART</span></h1>
+            <button onclick="toggleTab('cart-page')"><i class="fas fa-shopping-cart text-xl"></i></button>
         </div>
+    </header>
 
-        <!-- Products -->
-        <div id="product-grid" class="grid grid-cols-2 gap-4 p-4"></div>
+    <!-- Pages Container -->
+    <div id="home-page" class="tab-pane active-tab p-4">
+        <h2 class="font-bold text-lg mb-4">Shop by Category</h2>
+        <div id="product-grid" class="grid grid-cols-2 gap-4"></div>
     </div>
 
-    <!-- 3. PROFILE SETTINGS -->
-    <div id="profile-section" class="section hide p-6">
-        <h2 class="text-2xl font-black mb-6">Settings</h2>
-        <div class="bg-white p-6 rounded-3xl shadow-sm">
-            <p class="py-4 border-b">Edit Profile</p>
-            <p class="py-4 border-b">My Orders</p>
-            <p class="py-4 border-b" onclick="toggleSection('main-app')">Back to Home</p>
-        </div>
+    <!-- Cart Page -->
+    <div id="cart-page" class="tab-pane p-4">
+        <h2 class="text-2xl font-black mb-4">Your Cart</h2>
+        <div id="cart-items"></div>
     </div>
 
-    <!-- 4. FOOTER / CART -->
-    <div id="cart-footer" class="fixed bottom-0 w-full bg-white border-t p-4 flex justify-between items-center hide z-50">
-        <div class="font-bold">Total: <span id="total-val">₹0</span></div>
-        <button class="bg-primary px-8 py-3 rounded-2xl font-black">PROCEED TO PAY</button>
-    </div>
+    <!-- Navigation -->
+    <nav class="fixed bottom-0 w-full bg-white border-t flex justify-around p-4 font-bold text-sm">
+        <button onclick="toggleTab('home-page')"><i class="fas fa-home block text-lg"></i>Home</button>
+        <button onclick="toggleTab('home-page')"><i class="fas fa-list block text-lg"></i>Categories</button>
+        <button onclick="toggleTab('cart-page')"><i class="fas fa-user block text-lg"></i>Profile</button>
+    </nav>
 
     <script>
-        const inventory = [
-            {id: 1, name: "Fresh Apple", cat: "Fruits", price: 120},
-            {id: 2, name: "Broccoli", cat: "Vegetables", price: 60},
-            {id: 3, name: "Milk", cat: "Dairy", price: 50}
+        const products = [
+            { id: 1, name: "Fresh Broccoli", price: 60 },
+            { id: 2, name: "Red Apple", price: 120 },
+            { id: 3, name: "Milk", price: 50 },
+            { id: 4, name: "Atta", price: 350 }
         ];
+
         let cart = {};
 
-        function showApp() {
-            document.getElementById('login-section').classList.add('hide');
-            document.getElementById('main-app').classList.remove('hide');
-            filter('All');
+        function toggleTab(id) {
+            document.querySelectorAll('.tab-pane').forEach(t => t.classList.remove('active-tab'));
+            document.getElementById(id).classList.add('active-tab');
         }
 
-        function toggleSection(id) {
-            document.querySelectorAll('.section').forEach(s => s.classList.add('hide'));
-            document.getElementById(id).classList.remove('hide');
-        }
-
-        function filter(cat) {
+        function renderProducts() {
             const grid = document.getElementById('product-grid');
-            const items = cat === 'All' ? inventory : inventory.filter(i => i.cat === cat);
-            grid.innerHTML = items.map(p => `
-                <div class="bg-white p-4 rounded-3xl border">
+            grid.innerHTML = products.map(p => `
+                <div class="border rounded-2xl p-4 shadow-sm">
+                    <div class="bg-gray-100 h-24 rounded-xl mb-2"></div>
                     <h3 class="font-bold">${p.name}</h3>
-                    <p class="text-gray-500 mb-4">₹${p.price}</p>
-                    <div class="flex justify-between items-center bg-gray-100 p-2 rounded-xl">
-                        <button onclick="mod(${p.id}, -1)">-</button>
-                        <span id="q-${p.id}">0</span>
-                        <button onclick="mod(${p.id}, 1)">+</button>
-                    </div>
+                    <p class="text-sm mb-3">₹${p.price}</p>
+                    <button onclick="addToCart(${p.id})" class="w-full bg-yellow-400 py-2 rounded-lg font-bold">ADD</button>
                 </div>
             `).join('');
         }
 
-        function mod(id, val) {
-            cart[id] = Math.max(0, (cart[id] || 0) + val);
-            document.getElementById(`q-${id}`).innerText = cart[id];
-            updateTotal();
+        function addToCart(id) {
+            alert("Added to Cart!");
+            // Cart Logic yahan expand hogi
         }
 
-        function updateTotal() {
-            let total = 0;
-            inventory.forEach(i => total += (cart[i.id] || 0) * i.price);
-            document.getElementById('total-val').innerText = '₹' + total;
-            document.getElementById('cart-footer').classList.toggle('hide', total === 0);
-        }
+        renderProducts();
     </script>
 </body>
 </html>
