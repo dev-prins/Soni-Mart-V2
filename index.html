@@ -1,89 +1,99 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="hi">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Soni Mart | Fresh Grocery</title>
+    <title>Soni Mart | Official App</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
-        /* --- BRAND THEME --- */
-        :root { 
-            --primary-green: #28a745; 
-            --brand-yellow: #ffc107; 
-            --bg-light: #fffdf0; /* बहुत ही हल्का पीला बैकग्राउंड */
-        }
-        
-        body { font-family: 'Segoe UI', sans-serif; background: var(--bg-light); margin: 0; padding-bottom: 80px; }
-        
-        /* Header */
-        .header { background: var(--primary-green); color: white; padding: 15px; display: flex; justify-content: space-between; align-items: center; position: sticky; top: 0; z-index: 100; box-shadow: 0 2px 5px rgba(0,0,0,0.1); }
-        .logo { font-weight: bold; font-size: 22px; }
-        
-        /* Banner */
-        .banner { background: var(--brand-yellow); margin: 15px; padding: 20px; border-radius: 15px; text-align: center; color: #333; font-weight: bold; box-shadow: 0 4px 6px rgba(0,0,0,0.1); }
-        
-        /* Grid */
-        .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; padding: 15px; }
-        .card { background: white; border-radius: 15px; padding: 12px; text-align: center; border: 1px solid #e0e0e0; transition: 0.3s; }
-        .card:hover { border-color: var(--primary-green); }
-        .card img { width: 100%; height: 120px; object-fit: contain; margin-bottom: 10px; }
-        
-        /* Buttons */
-        .btn-add { background: var(--primary-green); color: white; border: none; padding: 10px; border-radius: 8px; width: 100%; font-weight: bold; cursor: pointer; }
-        .btn-checkout { background: var(--brand-yellow); color: #000; position: fixed; bottom: 15px; width: 92%; left: 4%; padding: 15px; border-radius: 12px; font-weight: bold; border: none; cursor: pointer; font-size: 16px; box-shadow: 0 4px 10px rgba(0,0,0,0.2); }
+        .product-card { border: 1px solid #e5e7eb; transition: 0.3s; }
+        .product-card:hover { border-color: #22c55e; }
     </style>
 </head>
-<body>
+<body class="bg-gray-50 pb-28">
 
-<div class="header">
-    <div class="logo">Soni Mart</div>
-    <div>🛒 <span id="cart-count">0</span></div>
-</div>
+    <header class="sticky top-0 bg-white p-4 flex justify-between items-center shadow-md z-50">
+        <div class="text-2xl font-black text-green-700">SONI MART</div>
+        <div class="relative bg-green-50 px-4 py-2 rounded-2xl">
+            <i class="fas fa-shopping-bag text-green-700"></i>
+            <span id="cart-total-qty" class="absolute -top-2 -right-2 bg-red-500 text-white text-xs w-5 h-5 flex items-center justify-center rounded-full">0</span>
+        </div>
+    </header>
 
-<div class="banner">
-    ✨ Daily Essentials at your doorstep in 30 Minutes!
-</div>
+    <div class="flex gap-3 p-4 overflow-x-auto whitespace-nowrap">
+        <button onclick="filterProducts('All')" class="bg-green-600 text-white px-5 py-2 rounded-full font-bold text-sm">All</button>
+        <button onclick="filterProducts('Fruits')" class="bg-white border px-5 py-2 rounded-full font-bold text-sm">Fruits</button>
+        <button onclick="filterProducts('Vegetables')" class="bg-white border px-5 py-2 rounded-full font-bold text-sm">Vegetables</button>
+        <button onclick="filterProducts('Dairy')" class="bg-white border px-5 py-2 rounded-full font-bold text-sm">Dairy</button>
+    </div>
 
-<div id="product-list" class="grid"></div>
+    <div id="product-list" class="grid grid-cols-2 gap-4 p-4"></div>
 
-<button class="btn-checkout" onclick="checkout()">Proceed to Order (via Email)</button>
+    <div id="bottom-bar" class="fixed bottom-0 w-full bg-white border-t p-4 flex justify-between items-center hidden shadow-[0_-5px_15px_rgba(0,0,0,0.1)]">
+        <div>
+            <div class="text-xs text-gray-500">Total Amount</div>
+            <div class="text-xl font-black" id="total-price">₹0</div>
+        </div>
+        <button onclick="checkout()" class="bg-yellow-400 px-8 py-3 rounded-2xl font-black shadow-lg">PROCEED TO CHECKOUT</button>
+    </div>
 
-<script>
-    // डेटा को यहाँ से मैनेज करें
-    const ADMIN_EMAIL = "prinsplayhelp@gmail.com"; 
-    let cart = [];
-    
-    // डमी प्रोडक्ट्स (आप इसे API से भी ले सकते हैं)
-    const products = [
-        {name: "Fresh Broccoli", price: 60, image: "https://via.placeholder.com/150"},
-        {name: "Red Apple", price: 120, image: "https://via.placeholder.com/150"},
-        {name: "Fresh Milk", price: 56, image: "https://via.placeholder.com/150"},
-        {name: "Tomato", price: 20, image: "https://via.placeholder.com/150"}
-    ];
+    <script>
+        const products = [
+            {id: 1, name: "Fresh Broccoli", category: "Vegetables", price: 60},
+            {id: 2, name: "Red Apple", category: "Fruits", price: 120},
+            {id: 3, name: "Fresh Milk", category: "Dairy", price: 56},
+            {id: 4, name: "Tomato", category: "Vegetables", price: 20},
+            {id: 5, name: "Banana", category: "Fruits", price: 40}
+        ];
 
-    function render() {
-        const list = document.getElementById("product-list");
-        list.innerHTML = products.map(p => `
-            <div class="card">
-                <img src="${p.image}">
-                <p style="font-weight:bold;">${p.name}</p>
-                <p>₹${p.price}</p>
-                <button class="btn-add" onclick="addToCart('${p.name}', ${p.price})">Add</button>
-            </div>
-        `).join('');
-    }
+        let cart = {};
 
-    function addToCart(name, price) {
-        cart.push({name, price});
-        document.getElementById('cart-count').innerText = cart.length;
-    }
+        function renderProducts(filter = 'All') {
+            const list = document.getElementById('product-list');
+            const filtered = filter === 'All' ? products : products.filter(p => p.category === filter);
+            
+            list.innerHTML = filtered.map(p => `
+                <div class="product-card bg-white p-4 rounded-3xl flex flex-col items-center text-center">
+                    <div class="h-20 w-20 bg-gray-100 rounded-full mb-3 flex items-center justify-center text-3xl">🛍️</div>
+                    <h3 class="font-bold text-sm">${p.name}</h3>
+                    <p class="text-gray-500 text-xs mb-3">₹${p.price} / unit</p>
+                    <div class="flex items-center gap-4 border-t pt-3 w-full justify-center">
+                        <button onclick="updateCart(${p.id}, -1)" class="bg-gray-100 w-8 h-8 rounded-full font-bold">-</button>
+                        <span id="qty-${p.id}" class="font-bold w-6">0</span>
+                        <button onclick="updateCart(${p.id}, 1)" class="bg-green-600 text-white w-8 h-8 rounded-full font-bold">+</button>
+                    </div>
+                </div>
+            `).join('');
+        }
 
-    function checkout() {
-        if(cart.length === 0) return alert("Cart is empty!");
-        const body = "Order Items: " + cart.map(i => i.name).join(", ") + " | Total Amount: ₹" + cart.reduce((s, i) => s + i.price, 0);
-        window.location.href = `mailto:${ADMIN_EMAIL}?subject=New Order!&body=${encodeURIComponent(body)}`;
-    }
+        function updateCart(id, change) {
+            cart[id] = Math.max(0, (cart[id] || 0) + change);
+            document.getElementById(`qty-${id}`).innerText = cart[id];
+            
+            let total = 0, qty = 0;
+            products.forEach(p => {
+                let q = cart[p.id] || 0;
+                qty += q;
+                total += q * p.price;
+            });
+            
+            document.getElementById('cart-total-qty').innerText = qty;
+            document.getElementById('total-price').innerText = '₹' + total;
+            document.getElementById('bottom-bar').classList.toggle('hidden', qty === 0);
+        }
 
-    render();
-</script>
+        function filterProducts(cat) { renderProducts(cat); }
+        
+        function checkout() {
+            let orderSummary = "Soni Mart Order Details:\n";
+            products.forEach(p => {
+                if(cart[p.id] > 0) orderSummary += `${p.name} x ${cart[p.id]} = ₹${p.price * cart[p.id]}\n`;
+            });
+            window.location.href = `mailto:prinsplayhelp@gmail.com?subject=New Order&body=${encodeURIComponent(orderSummary)}`;
+        }
+        
+        renderProducts();
+    </script>
 </body>
 </html>
