@@ -1,76 +1,78 @@
 <!DOCTYPE html>
-<html lang="hi" class="light">
+<html lang="hi">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Soni Mart | Pro App</title>
+    <title>Soni Mart | Official</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
-        body { background: #ffffff !important; color: #000 !important; font-family: 'Segoe UI', sans-serif; }
         .tab-pane { display: none; }
         .active-tab { display: block; }
     </style>
 </head>
-<body class="pb-28">
+<body class="pb-24 bg-white text-black">
 
-    <!-- Header -->
-    <header class="p-4 border-b sticky top-0 bg-white z-50">
-        <div class="flex justify-between items-center">
-            <h1 class="text-2xl font-black">SONI<span class="text-yellow-500">MART</span></h1>
-            <button onclick="toggleTab('cart-page')"><i class="fas fa-shopping-cart text-xl"></i></button>
-        </div>
+    <header class="p-4 border-b sticky top-0 bg-white z-50 flex justify-between items-center">
+        <h1 class="text-2xl font-black">SONI<span class="text-yellow-500">MART</span></h1>
+        <button onclick="toggleTab('cart-page')" class="relative"><i class="fas fa-shopping-cart text-xl"></i>
+            <span id="cart-badge" class="absolute -top-2 -right-2 bg-black text-white text-[10px] w-4 h-4 rounded-full flex items-center justify-center">0</span>
+        </button>
     </header>
 
-    <!-- Pages Container -->
     <div id="home-page" class="tab-pane active-tab p-4">
-        <h2 class="font-bold text-lg mb-4">Shop by Category</h2>
         <div id="product-grid" class="grid grid-cols-2 gap-4"></div>
     </div>
 
-    <!-- Cart Page -->
     <div id="cart-page" class="tab-pane p-4">
-        <h2 class="text-2xl font-black mb-4">Your Cart</h2>
-        <div id="cart-items"></div>
+        <h2 class="text-2xl font-black mb-4">Cart</h2>
+        <div id="cart-items" class="space-y-4"></div>
+        <div id="cart-total" class="mt-6 font-black text-xl"></div>
     </div>
 
-    <!-- Navigation -->
     <nav class="fixed bottom-0 w-full bg-white border-t flex justify-around p-4 font-bold text-sm">
         <button onclick="toggleTab('home-page')"><i class="fas fa-home block text-lg"></i>Home</button>
-        <button onclick="toggleTab('home-page')"><i class="fas fa-list block text-lg"></i>Categories</button>
-        <button onclick="toggleTab('cart-page')"><i class="fas fa-user block text-lg"></i>Profile</button>
+        <button onclick="toggleTab('cart-page')"><i class="fas fa-shopping-bag block text-lg"></i>Cart</button>
     </nav>
 
     <script>
-        const products = [
+        let products = [
             { id: 1, name: "Fresh Broccoli", price: 60 },
             { id: 2, name: "Red Apple", price: 120 },
-            { id: 3, name: "Milk", price: 50 },
-            { id: 4, name: "Atta", price: 350 }
+            { id: 3, name: "Milk", price: 50 }
         ];
-
-        let cart = {};
+        let cart = JSON.parse(localStorage.getItem('cart')) || {};
 
         function toggleTab(id) {
             document.querySelectorAll('.tab-pane').forEach(t => t.classList.remove('active-tab'));
             document.getElementById(id).classList.add('active-tab');
+            if(id === 'cart-page') renderCart();
         }
 
         function renderProducts() {
             const grid = document.getElementById('product-grid');
             grid.innerHTML = products.map(p => `
-                <div class="border rounded-2xl p-4 shadow-sm">
-                    <div class="bg-gray-100 h-24 rounded-xl mb-2"></div>
+                <div class="border p-4 rounded-2xl shadow-sm">
                     <h3 class="font-bold">${p.name}</h3>
-                    <p class="text-sm mb-3">₹${p.price}</p>
-                    <button onclick="addToCart(${p.id})" class="w-full bg-yellow-400 py-2 rounded-lg font-bold">ADD</button>
+                    <p class="text-sm mb-2">₹${p.price}</p>
+                    <button onclick="addToCart(${p.id})" class="w-full bg-yellow-400 py-2 rounded-lg font-bold text-sm">ADD</button>
                 </div>
             `).join('');
         }
 
         function addToCart(id) {
-            alert("Added to Cart!");
-            // Cart Logic yahan expand hogi
+            cart[id] = (cart[id] || 0) + 1;
+            localStorage.setItem('cart', JSON.stringify(cart));
+            document.getElementById('cart-badge').innerText = Object.values(cart).reduce((a,b)=>a+b, 0);
+            alert("Added to cart!");
+        }
+
+        function renderCart() {
+            const container = document.getElementById('cart-items');
+            container.innerHTML = Object.keys(cart).map(id => {
+                let p = products.find(x => x.id == id);
+                return `<div class="flex justify-between border-b pb-2"><span>${p.name} (x${cart[id]})</span><span>₹${p.price * cart[id]}</span></div>`;
+            }).join('');
         }
 
         renderProducts();
