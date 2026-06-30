@@ -1,11 +1,23 @@
-const APP_NAME = "Prinso Mart";
+const CONFIG = {
 
-const API_URL = "https://prinsomart-backend.onrender.com/api";
+APP_NAME : "Soni Mart",
 
-const APP_VERSION = "1.0.0";
+VERSION : "2.0",
 
-let cart = [];
+API_URL : "https://prinsomart-backend.onrender.com/api",
 
-let user = null;
+IMAGE_URL : "https://prinsomart-backend.onrender.com",
 
-console.log(APP_NAME + " Loaded");
+CURRENCY : "₹",
+
+DELIVERY_CHARGE : 30,
+
+FREE_DELIVERY : 299,
+
+DEFAULT_LANGUAGE : "hi",
+
+DEFAULT_THEME : "light"
+
+};
+
+Object.freeze(CONFIG);
