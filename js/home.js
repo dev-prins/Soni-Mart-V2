@@ -1,340 +1,103 @@
+/* ==========================================
+   PRINSO MART API
+========================================== */
 
-/* =====================================
-   PRINSO MART HOME JS
-===================================== */
+const API = {
 
-const productGrid = document.getElementById("productGrid");
+BASE_URL: "https://prinsomart-backend.onrender.com/api",
 
-const products = [
+async get(url){
 
-{
-id:1,
-name:"Fresh Tomato",
-price:35,
-oldPrice:45,
-weight:"1 KG",
-image:"images/product-placeholder.png"
-},
+const response = await fetch(
 
-{
-id:2,
-name:"Fresh Potato",
-price:28,
-oldPrice:35,
-weight:"1 KG",
-image:"images/product-placeholder.png"
-},
-
-{
-id:3,
-name:"Fresh Onion",
-price:32,
-oldPrice:40,
-weight:"1 KG",
-image:"images/product-placeholder.png"
-},
-
-{
-id:4,
-name:"Amul Milk",
-price:30,
-oldPrice:35,
-weight:"500 ML",
-image:"images/product-placeholder.png"
-}
-
-];
-
-function loadProducts(){
-
-productGrid.innerHTML="";
-
-products.forEach(product=>{
-
-productGrid.innerHTML+=`
-
-<div class="product-card fade-in">
-
-<img src="${product.image}">
-
-<h3>${product.name}</h3>
-
-<p class="weight">${product.weight}</p>
-
-<div class="price-row">
-
-<span class="price">₹${product.price}</span>
-
-<span class="old-price">
-
-₹${product.oldPrice}
-
-</span>
-
-</div>
-
-<button
-
-class="add-btn"
-
-onclick="addToCart(${product.id})">
-
-<i class="fa-solid fa-cart-plus"></i>
-
-Add
-
-</button>
-
-</div>
-
-`;
-
-});
-
-}
-
-loadProducts();
-/* =====================================
-   CART SYSTEM
-===================================== */
-
-let cart = JSON.parse(localStorage.getItem("prinso_cart")) || [];
-
-// Add To Cart
-
-function addToCart(id){
-
-const product = products.find(item=>item.id===id);
-
-if(!product) return;
-
-cart.push(product);
-
-localStorage.setItem(
-
-"prinso_cart",
-
-JSON.stringify(cart)
+`${this.BASE_URL}${url}`
 
 );
 
-updateCartCount();
+if(!response.ok){
 
-showToast(product.name+" Added to Cart");
-
-}
-
-// Update Cart Badge
-
-function updateCartCount(){
-
-const badge=document.getElementById("cartCount");
-
-if(!badge) return;
-
-badge.innerText=cart.length;
+throw new Error("API Error");
 
 }
 
-// Toast Message
+return await response.json();
 
-function showToast(message){
+},
 
-const toast=document.createElement("div");
+async post(url,data){
 
-toast.className="toast";
+const response = await fetch(
 
-toast.innerText=message;
+`${this.BASE_URL}${url}`,
 
-document.body.appendChild(toast);
+{
 
-setTimeout(()=>{
+method:"POST",
 
-toast.classList.add("show");
+headers:{
 
-},100);
+"Content-Type":"application/json"
 
-setTimeout(()=>{
+},
 
-toast.classList.remove("show");
-
-setTimeout(()=>{
-
-toast.remove();
-
-},300);
-
-},2000);
+body:JSON.stringify(data)
 
 }
-
-// Wishlist
-
-let wishlist=JSON.parse(
-
-localStorage.getItem("prinso_wishlist")
-
-)||[];
-
-function toggleWishlist(id){
-
-const index=wishlist.indexOf(id);
-
-if(index===-1){
-
-wishlist.push(id);
-
-showToast("Added to Wishlist");
-
-}else{
-
-wishlist.splice(index,1);
-
-showToast("Removed from Wishlist");
-
-}
-
-localStorage.setItem(
-
-"prinso_wishlist",
-
-JSON.stringify(wishlist)
 
 );
 
-}
+if(!response.ok){
 
-// Search
-
-const search=document.getElementById("search");
-
-if(search){
-
-search.addEventListener("keyup",()=>{
-
-const value=search.value.toLowerCase();
-
-const cards=document.querySelectorAll(".product-card");
-
-cards.forEach(card=>{
-
-const name=card.querySelector("h3")
-
-.innerText.toLowerCase();
-
-card.style.display=
-
-name.includes(value)
-
-?"block"
-
-:"none";
-
-});
-
-});
+throw new Error("API Error");
 
 }
 
-updateCartCount();
-/* =====================================
-   PRINSO MART
-   HOME PAGE FEATURES
-===================================== */
+return await response.json();
 
-// Banner Slider
+},
 
-const banners = [
-    "images/banner1.jpg",
-    "images/banner2.jpg",
-    "images/banner3.jpg"
-];
+async put(url,data){
 
-let bannerIndex = 0;
+const response = await fetch(
 
-function startBannerSlider() {
+`${this.BASE_URL}${url}`,
 
-    const banner = document.querySelector(".banner img");
+{
 
-    if (!banner) return;
+method:"PUT",
 
-    setInterval(() => {
+headers:{
 
-        bannerIndex++;
+"Content-Type":"application/json"
 
-        if (bannerIndex >= banners.length) {
+},
 
-            bannerIndex = 0;
-
-        }
-
-        banner.src = banners[bannerIndex];
-
-    }, 3000);
+body:JSON.stringify(data)
 
 }
 
-startBannerSlider();
+);
 
-/* =====================================
-   LOCATION
-===================================== */
+return await response.json();
 
-function loadLocation() {
+},
 
-    const location = document.querySelector(".location");
+async delete(url){
 
-    if (!location) return;
+const response = await fetch(
 
-    location.innerHTML =
-        '<i class="fa-solid fa-location-dot"></i> Harrwah, Umaria';
+`${this.BASE_URL}${url}`,
+
+{
+
+method:"DELETE"
 
 }
 
-loadLocation();
+);
 
-/* =====================================
-   FEATURED PRODUCTS
-===================================== */
+return await response.json();
 
-const featuredProducts = products.filter(p => p.price < 35);
+}
 
-console.log("Featured Products :", featuredProducts);
-
-/* =====================================
-   SPLASH SCREEN
-===================================== */
-
-window.addEventListener("load", () => {
-
-    setTimeout(() => {
-
-        const splash = document.getElementById("splash");
-
-        if (splash) {
-
-            splash.style.display = "none";
-
-        }
-
-    }, 1800);
-
-});
-
-/* =====================================
-   SCROLL TO TOP
-===================================== */
-
-window.addEventListener("scroll", () => {
-
-    if (window.scrollY > 150) {
-
-        document.body.classList.add("scrolled");
-
-    } else {
-
-        document.body.classList.remove("scrolled");
-
-    }
-
-});
+};
