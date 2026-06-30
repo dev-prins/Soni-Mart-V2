@@ -1,13 +1,17 @@
-/* =====================================
-   PRINSO MART
+/* ==========================================
+   SONI MART
    GLOBAL STYLE
-====================================== */
+========================================== */
 
 *{
 margin:0;
 padding:0;
 box-sizing:border-box;
-font-family:Poppins,sans-serif;
+font-family:'Poppins',sans-serif;
+}
+
+html{
+scroll-behavior:smooth;
 }
 
 body{
@@ -20,6 +24,8 @@ overflow-x:hidden;
 
 }
 
+/* ========================= */
+
 a{
 
 text-decoration:none;
@@ -30,39 +36,65 @@ color:inherit;
 
 img{
 
-max-width:100%;
+width:100%;
 
 display:block;
 
 }
 
+button{
+
+cursor:pointer;
+
+border:none;
+
+outline:none;
+
+}
+
 .container{
 
-padding:15px;
+width:95%;
+
+max-width:1300px;
+
+margin:auto;
+
+padding:15px 0;
 
 }
 
-.section-title{
+/* ========================= */
 
-font-size:22px;
+:root{
 
-font-weight:700;
+--primary:#18c15f;
 
-margin:20px 0 15px;
+--secondary:#0ea84b;
 
-color:#222;
+--yellow:#ffd400;
+
+--danger:#ff4d4f;
+
+--text:#222;
+
+--light:#ffffff;
+
+--border:#e5e5e5;
+
+--shadow:0 8px 20px rgba(0,0,0,.08);
+
+--radius:14px;
 
 }
 
-/* Header */
+/* =========================
+HEADER
+========================= */
 
-header{
+.header{
 
-background:#16a34a;
-
-padding:15px;
-
-color:#fff;
+background:#fff;
 
 position:sticky;
 
@@ -70,11 +102,11 @@ top:0;
 
 z-index:999;
 
-box-shadow:0 3px 15px rgba(0,0,0,.15);
+box-shadow:0 2px 10px rgba(0,0,0,.05);
 
 }
 
-.top-header{
+.top-bar{
 
 display:flex;
 
@@ -82,43 +114,130 @@ justify-content:space-between;
 
 align-items:center;
 
-}
-
-.logo{
-
-font-size:28px;
-
-font-weight:800;
+padding:12px 15px;
 
 }
+
+.location{
+
+display:flex;
+
+align-items:center;
+
+gap:8px;
+
+font-size:15px;
+
+font-weight:600;
+
+color:#333;
+
+}
+
+.location i{
+
+color:var(--primary);
+
+font-size:18px;
+
+}
+
+.header-icons{
+
+display:flex;
+
+align-items:center;
+
+gap:18px;
+
+font-size:22px;
+
+position:relative;
+
+}
+
+.header-icons a{
+
+position:relative;
+
+}
+
+#cartCount{
+
+position:absolute;
+
+top:-8px;
+
+right:-10px;
+
+background:var(--danger);
+
+color:#fff;
+
+font-size:11px;
+
+padding:2px 6px;
+
+border-radius:50px;
+
+font-weight:bold;
+
+}
+
+/* =========================
+SEARCH
+========================= */
 
 .search-box{
 
-margin-top:15px;
+margin:12px;
+
+display:flex;
+
+align-items:center;
+
+background:#f1f1f1;
+
+padding:12px;
+
+border-radius:50px;
+
+}
+
+.search-box i{
+
+margin-right:10px;
+
+color:#888;
 
 }
 
 .search-box input{
 
-width:100%;
+flex:1;
 
-padding:14px;
+background:none;
 
 border:none;
 
 outline:none;
 
-border-radius:12px;
-
-font-size:16px;
+font-size:15px;
 
 }
-
-/* Banner */
+/* ==========================================
+   BANNER
+========================================== */
 
 .banner{
 
-padding:15px;
+margin:15px;
+
+border-radius:20px;
+
+overflow:hidden;
+
+box-shadow:var(--shadow);
 
 }
 
@@ -126,11 +245,17 @@ padding:15px;
 
 width:100%;
 
-border-radius:16px;
+height:190px;
+
+object-fit:cover;
+
+display:block;
 
 }
 
-/* Category */
+/* ==========================================
+   CATEGORY
+========================================== */
 
 .category-grid{
 
@@ -142,29 +267,31 @@ gap:15px;
 
 }
 
-.category{
+.category-card{
 
 background:#fff;
 
-border-radius:18px;
+padding:15px 10px;
 
-padding:15px;
+border-radius:18px;
 
 text-align:center;
 
-box-shadow:0 5px 18px rgba(0,0,0,.08);
+box-shadow:var(--shadow);
 
 transition:.3s;
 
-}
-
-.category:hover{
-
-transform:translateY(-4px);
+cursor:pointer;
 
 }
 
-.category img{
+.category-card:hover{
+
+transform:translateY(-6px);
+
+}
+
+.category-card img{
 
 width:60px;
 
@@ -172,9 +299,11 @@ height:60px;
 
 margin:auto;
 
+object-fit:contain;
+
 }
 
-.category p{
+.category-card h4{
 
 margin-top:10px;
 
@@ -183,65 +312,64 @@ font-size:14px;
 font-weight:600;
 
 }
-/* ===========================
-   OFFER SLIDER
-=========================== */
 
-.offer-slider{
+/* ==========================================
+   OFFER CARD
+========================================== */
 
-display:flex;
+.offer-section{
 
-gap:15px;
-
-overflow-x:auto;
-
-padding-bottom:10px;
-
-scrollbar-width:none;
-
-}
-
-.offer-slider::-webkit-scrollbar{
-
-display:none;
+margin:18px;
 
 }
 
 .offer-card{
 
-min-width:260px;
+background:linear-gradient(135deg,#18c15f,#0b8d44);
 
-background:linear-gradient(135deg,#22c55e,#16a34a);
+padding:25px;
 
-border-radius:18px;
-
-padding:20px;
+border-radius:22px;
 
 color:#fff;
 
-box-shadow:0 8px 20px rgba(0,0,0,.15);
+box-shadow:var(--shadow);
 
 }
 
-.offer-card h3{
+.offer-card h2{
 
-font-size:22px;
+font-size:26px;
 
-margin-bottom:8px;
+margin-bottom:10px;
 
 }
 
 .offer-card p{
 
-font-size:15px;
+font-size:16px;
 
-opacity:.95;
+margin-bottom:18px;
 
 }
 
-/* ===========================
-   PRODUCT GRID
-=========================== */
+.offer-card button{
+
+background:#fff;
+
+color:#18c15f;
+
+padding:12px 24px;
+
+border-radius:30px;
+
+font-weight:bold;
+
+}
+
+/* ==========================================
+   PRODUCT CARD
+========================================== */
 
 .product-grid{
 
@@ -251,35 +379,33 @@ grid-template-columns:repeat(2,1fr);
 
 gap:15px;
 
-margin-top:10px;
-
 }
 
 .product-card{
 
 background:#fff;
 
-border-radius:18px;
+border-radius:20px;
 
 padding:12px;
 
-box-shadow:0 5px 15px rgba(0,0,0,.08);
+box-shadow:var(--shadow);
 
-transition:.25s;
+position:relative;
+
+transition:.3s;
 
 }
 
 .product-card:hover{
 
-transform:translateY(-4px);
+transform:translateY(-5px);
 
 }
 
 .product-card img{
 
-width:100%;
-
-height:130px;
+height:140px;
 
 object-fit:contain;
 
@@ -287,9 +413,9 @@ object-fit:contain;
 
 .product-card h3{
 
-font-size:16px;
-
 margin-top:10px;
+
+font-size:16px;
 
 }
 
@@ -299,7 +425,7 @@ font-size:13px;
 
 color:#777;
 
-margin:6px 0;
+margin:5px 0;
 
 }
 
@@ -311,27 +437,27 @@ justify-content:space-between;
 
 align-items:center;
 
-margin-top:8px;
+margin:8px 0;
 
 }
 
 .price{
 
-font-size:18px;
+font-size:20px;
 
 font-weight:700;
 
-color:#16a34a;
+color:#18c15f;
 
 }
 
 .old-price{
 
-font-size:14px;
-
 text-decoration:line-through;
 
 color:#999;
+
+font-size:13px;
 
 }
 
@@ -339,36 +465,121 @@ color:#999;
 
 width:100%;
 
-margin-top:12px;
-
-padding:10px;
-
-border:none;
+padding:12px;
 
 border-radius:12px;
 
-background:#16a34a;
+background:#18c15f;
 
 color:#fff;
 
 font-size:15px;
 
-font-weight:600;
+font-weight:700;
 
-cursor:pointer;
-
-transition:.25s;
+transition:.3s;
 
 }
 
 .add-btn:hover{
 
-background:#15803d;
+background:#0ea84b;
 
 }
-/* ===========================
-   BOTTOM NAVIGATION
-=========================== */
+
+/* Discount Badge */
+
+.discount{
+
+position:absolute;
+
+top:12px;
+
+left:12px;
+
+background:#ff4d4f;
+
+color:#fff;
+
+padding:4px 8px;
+
+font-size:11px;
+
+font-weight:bold;
+
+border-radius:20px;
+
+}
+
+/* ==========================================
+   FLOATING CART
+========================================== */
+
+.floating-cart{
+
+position:fixed;
+
+right:18px;
+
+bottom:85px;
+
+width:62px;
+
+height:62px;
+
+border-radius:50%;
+
+background:linear-gradient(135deg,#18c15f,#0ea84b);
+
+display:flex;
+
+align-items:center;
+
+justify-content:center;
+
+color:#fff;
+
+font-size:24px;
+
+box-shadow:0 10px 25px rgba(0,0,0,.25);
+
+z-index:999;
+
+transition:.3s;
+
+}
+
+.floating-cart:hover{
+
+transform:scale(1.08);
+
+}
+
+.floating-cart span{
+
+position:absolute;
+
+top:-5px;
+
+right:-3px;
+
+background:#ff4d4f;
+
+color:#fff;
+
+font-size:11px;
+
+padding:3px 7px;
+
+border-radius:50px;
+
+font-weight:700;
+
+}
+
+/* ==========================================
+BOTTOM NAVIGATION
+========================================== */
 
 .bottom-nav{
 
@@ -380,9 +591,9 @@ left:0;
 
 width:100%;
 
-height:68px;
+height:72px;
 
-background:#ffffff;
+background:#fff;
 
 display:flex;
 
@@ -390,7 +601,7 @@ justify-content:space-around;
 
 align-items:center;
 
-box-shadow:0 -5px 20px rgba(0,0,0,.08);
+box-shadow:0 -4px 20px rgba(0,0,0,.08);
 
 z-index:999;
 
@@ -406,19 +617,13 @@ align-items:center;
 
 justify-content:center;
 
-text-decoration:none;
-
-color:#777;
-
 font-size:12px;
 
 font-weight:600;
 
-flex:1;
+color:#666;
 
-transition:.25s;
-
-position:relative;
+transition:.3s;
 
 }
 
@@ -432,113 +637,202 @@ margin-bottom:5px;
 
 .bottom-nav a.active{
 
-color:#16a34a;
+color:#18c15f;
 
 }
 
-.bottom-nav a:hover{
+/* ==========================================
+TOAST
+========================================== */
 
-color:#16a34a;
-
-}
-
-/* Badge */
-
-.badge{
-
-position:absolute;
-
-top:5px;
-
-right:25%;
-
-background:#ef4444;
-
-color:#fff;
-
-font-size:11px;
-
-font-weight:700;
-
-padding:2px 6px;
-
-border-radius:50px;
-
-}
-
-/* ===========================
-   SPLASH SCREEN
-=========================== */
-
-#splash{
+.toast{
 
 position:fixed;
 
-top:0;
+left:50%;
 
-left:0;
+bottom:95px;
 
-width:100%;
+transform:translateX(-50%);
 
-height:100vh;
-
-background:#16a34a;
-
-display:flex;
-
-justify-content:center;
-
-align-items:center;
-
-z-index:9999;
-
-flex-direction:column;
+background:#222;
 
 color:#fff;
 
+padding:14px 24px;
+
+border-radius:40px;
+
+font-size:14px;
+
+opacity:0;
+
+visibility:hidden;
+
+transition:.35s;
+
+z-index:9999;
+
 }
 
-.logo-area{
+.toast.show{
+
+opacity:1;
+
+visibility:visible;
+
+}
+
+/* ==========================================
+SCROLL BUTTON
+========================================== */
+
+#scrollTop{
+
+position:fixed;
+
+right:18px;
+
+bottom:160px;
+
+width:48px;
+
+height:48px;
+
+border-radius:50%;
+
+background:#fff;
+
+color:#18c15f;
+
+box-shadow:var(--shadow);
+
+display:none;
+
+align-items:center;
+
+justify-content:center;
+
+font-size:18px;
+
+z-index:999;
+
+}
+
+/* ==========================================
+FOOTER
+========================================== */
+
+.footer{
+
+margin-top:50px;
+
+padding:40px 20px 120px;
+
+background:#fff;
 
 text-align:center;
 
 }
 
-.logo-area img{
+.footer-logo img{
 
-width:130px;
-
-height:130px;
+width:80px;
 
 margin:auto;
 
-margin-bottom:20px;
+margin-bottom:12px;
 
 }
 
-.logo-area h1{
+.footer h2{
 
-font-size:36px;
-
-font-weight:800;
+font-size:28px;
 
 margin-bottom:10px;
 
 }
 
-.logo-area p{
+.footer-links{
 
-font-size:17px;
+display:flex;
 
-opacity:.9;
+justify-content:center;
+
+gap:18px;
+
+margin:20px 0;
+
+flex-wrap:wrap;
 
 }
 
-/* ===========================
-   RESPONSIVE
-=========================== */
+.footer-links a{
 
-@media(max-width:768px){
+font-size:15px;
+
+color:#666;
+
+}
+
+.social-icons{
+
+display:flex;
+
+justify-content:center;
+
+gap:16px;
+
+margin:20px 0;
+
+}
+
+.social-icons a{
+
+width:42px;
+
+height:42px;
+
+display:flex;
+
+align-items:center;
+
+justify-content:center;
+
+border-radius:50%;
+
+background:#18c15f;
+
+color:#fff;
+
+font-size:18px;
+
+}
+
+.copyright{
+
+margin-top:15px;
+
+font-size:13px;
+
+color:#888;
+
+}
+/* ==========================================
+   RESPONSIVE DESIGN
+========================================== */
+
+@media screen and (max-width:1200px){
+
+.container{
+
+width:96%;
+
+}
+
+}
+
+@media screen and (max-width:992px){
 
 .category-grid{
 
@@ -552,15 +846,53 @@ grid-template-columns:repeat(2,1fr);
 
 }
 
-.section-title{
+}
 
-font-size:20px;
+@media screen and (max-width:768px){
+
+.header{
+
+padding-bottom:10px;
+
+}
+
+.top-bar{
+
+flex-direction:column;
+
+align-items:flex-start;
+
+gap:10px;
+
+}
+
+.search-box{
+
+margin-top:10px;
+
+}
+
+.banner img{
+
+height:170px;
+
+}
+
+.category-card{
+
+padding:12px;
+
+}
+
+.product-card img{
+
+height:120px;
 
 }
 
 }
 
-@media(max-width:480px){
+@media screen and (max-width:576px){
 
 .category-grid{
 
@@ -570,23 +902,205 @@ gap:10px;
 
 }
 
-.category img{
+.category-card img{
 
-width:48px;
+width:45px;
 
-height:48px;
+height:45px;
+
+}
+
+.category-card h4{
+
+font-size:11px;
+
+}
+
+.product-grid{
+
+grid-template-columns:repeat(2,1fr);
+
+gap:12px;
+
+}
+
+.product-card{
+
+padding:10px;
 
 }
 
 .product-card img{
 
-height:110px;
+height:100px;
 
 }
 
-.logo{
+.price{
 
-font-size:22px;
+font-size:18px;
+
+}
+
+.add-btn{
+
+padding:10px;
+
+font-size:14px;
+
+}
+
+.section-title{
+
+font-size:20px;
+
+}
+
+.footer{
+
+padding-bottom:100px;
+
+}
+
+}
+
+/* ==========================================
+   DARK MODE
+========================================== */
+
+body.dark{
+
+background:#111827;
+
+color:#ffffff;
+
+}
+
+body.dark .header,
+
+body.dark .footer,
+
+body.dark .category-card,
+
+body.dark .product-card,
+
+body.dark .bottom-nav{
+
+background:#1f2937;
+
+color:#ffffff;
+
+}
+
+body.dark .search-box{
+
+background:#374151;
+
+}
+
+body.dark .search-box input{
+
+color:#ffffff;
+
+}
+
+body.dark .footer-links a{
+
+color:#d1d5db;
+
+}
+
+/* ==========================================
+   LOADER
+========================================== */
+
+.loader{
+
+width:45px;
+
+height:45px;
+
+border:5px solid rgba(255,255,255,.3);
+
+border-top:5px solid #fff;
+
+border-radius:50%;
+
+animation:spin 1s linear infinite;
+
+margin:auto;
+
+margin-top:20px;
+
+}
+
+@keyframes spin{
+
+0%{
+
+transform:rotate(0deg);
+
+}
+
+100%{
+
+transform:rotate(360deg);
+
+}
+
+}
+
+/* ==========================================
+   FADE ANIMATION
+========================================== */
+
+.fade{
+
+animation:fade .4s ease;
+
+}
+
+@keyframes fade{
+
+from{
+
+opacity:0;
+
+transform:translateY(15px);
+
+}
+
+to{
+
+opacity:1;
+
+transform:translateY(0);
+
+}
+
+}
+
+/* ==========================================
+   SCALE ANIMATION
+========================================== */
+
+.scale{
+
+animation:scale .3s ease;
+
+}
+
+@keyframes scale{
+
+0%{
+
+transform:scale(.9);
+
+}
+
+100%{
+
+transform:scale(1);
 
 }
 
