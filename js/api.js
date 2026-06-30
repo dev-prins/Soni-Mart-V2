@@ -85,3 +85,60 @@ const OrderAPI = {
     }
 
 };
+/* ==========================
+PRODUCT API
+========================== */
+
+async function getProducts(){
+
+return await API.get("/products");
+
+}
+
+/* ==========================
+CATEGORY API
+========================== */
+
+async function getCategories(){
+
+return await API.get("/categories");
+
+}
+
+/* ==========================
+LOGIN API
+========================== */
+
+async function login(email,password){
+
+return await API.post(
+
+"/auth/login",
+
+{
+
+email,
+
+password
+
+}
+
+);
+
+}
+
+/* ==========================
+REGISTER API
+========================== */
+
+async function register(data){
+
+return await API.post(
+
+"/auth/register",
+
+data
+
+);
+
+}
