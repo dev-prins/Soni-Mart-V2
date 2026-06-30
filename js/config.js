@@ -1,32 +1,11 @@
+const APP_NAME = "Prinso Mart";
 
-// ===============================
-// Prinso Mart Configuration
-// ===============================
+const API_URL = "https://prinsomart-backend.onrender.com/api";
 
-// Backend API URL
-const API_URL = "https://prinso-mart.onrender.com/api";
+const APP_VERSION = "1.0.0";
 
-// App Information
-const APP_CONFIG = {
-    appName: "Prinso Mart",
-    version: "1.0.0",
+let cart = [];
 
-    currency: "₹",
+let user = null;
 
-    supportEmail: "support@prinsomart.com",
-
-    supportPhone: "+91-8629995010",
-
-    defaultLanguage: "hi",
-
-    theme: "light",
-
-    cartStorage: "prinso_cart",
-
-    authStorage: "prinso_auth",
-
-    wishlistStorage: "prinso_wishlist"
-};
-
-// Freeze configuration
-Object.freeze(APP_CONFIG);
+console.log(APP_NAME + " Loaded");
