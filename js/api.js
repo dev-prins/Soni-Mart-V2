@@ -1,144 +1,59 @@
+const API = {
 
-// ===============================
-// Prinso Mart API Service
-// ===============================
+    baseUrl: CONFIG.API_URL,
 
-async function apiRequest(endpoint, method = "GET", data = null) {
-    try {
-        const token = localStorage.getItem(APP_CONFIG.authStorage);
+    async request(endpoint, options = {}) {
 
-        const options = {
-            method,
-            headers: {
-                "Content-Type": "application/json"
-            }
+        const token = localStorage.getItem("token");
+
+        const headers = {
+            "Content-Type": "application/json",
+            ...options.headers
         };
 
         if (token) {
-            options.headers.Authorization = `Bearer ${token}`;
+            headers.Authorization = `Bearer ${token}`;
         }
 
-        if (data) {
-            options.body = JSON.stringify(data);
-        }
+        const response = await fetch(
+            `${this.baseUrl}${endpoint}`,
+            {
+                ...options,
+                headers
+            }
+        );
 
-        const response = await fetch(`${API_URL}${endpoint}`, options);
-
-        const result = await response.json();
+        const data = await response.json();
 
         if (!response.ok) {
-            throw new Error(result.message || "Something went wrong");
+            throw new Error(data.message || "Request Failed");
         }
 
-        return result;
-
-    } catch (error) {
-        console.error("API Error:", error);
-        throw error;
-    }
-}
-
-// ===============================
-// Authentication
-// ===============================
-
-const AuthAPI = {
-
-    register(data) {
-        return apiRequest("/auth/register", "POST", data);
+        return data;
     },
 
-    login(data) {
-        return apiRequest("/auth/login", "POST", data);
+    get(endpoint) {
+        return this.request(endpoint);
     },
 
-    forgotPassword(data) {
-        return apiRequest("/auth/forgot-password", "POST", data);
+    post(endpoint, body) {
+        return this.request(endpoint, {
+            method: "POST",
+            body: JSON.stringify(body)
+        });
+    },
+
+    put(endpoint, body) {
+        return this.request(endpoint, {
+            method: "PUT",
+            body: JSON.stringify(body)
+        });
+    },
+
+    delete(endpoint) {
+        return this.request(endpoint, {
+            method: "DELETE"
+        });
     }
 
 };
-
-// ===============================
-// Products
-// ===============================
-
-const ProductAPI = {
-
-    getProducts() {
-        return apiRequest("/products");
-    },
-
-    getProduct(id) {
-        return apiRequest(`/products/${id}`);
-    }
-
-};
-
-// ===============================
-// Orders
-// ===============================
-
-const OrderAPI = {
-
-    getOrders() {
-        return apiRequest("/orders");
-    }
-
-};
-/* ==========================
-PRODUCT API
-========================== */
-
-async function getProducts(){
-
-return await API.get("/products");
-
-}
-
-/* ==========================
-CATEGORY API
-========================== */
-
-async function getCategories(){
-
-return await API.get("/categories");
-
-}
-
-/* ==========================
-LOGIN API
-========================== */
-
-async function login(email,password){
-
-return await API.post(
-
-"/auth/login",
-
-{
-
-email,
-
-password
-
-}
-
-);
-
-}
-
-/* ==========================
-REGISTER API
-========================== */
-
-async function register(data){
-
-return await API.post(
-
-"/auth/register",
-
-data
-
-);
-
-}
