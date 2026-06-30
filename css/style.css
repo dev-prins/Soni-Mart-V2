@@ -1,111 +1,185 @@
-
-/* ======================================
-   PRINSO MART - GLOBAL STYLES
+/* =====================================
+   PRINSO MART
+   GLOBAL STYLE
 ====================================== */
 
-:root{
-
-    --primary:#22c55e;
-    --primary-dark:#16a34a;
-    --secondary:#facc15;
-    --danger:#ef4444;
-    --warning:#f59e0b;
-    --success:#22c55e;
-
-    --white:#ffffff;
-    --black:#111827;
-
-    --gray-100:#f3f4f6;
-    --gray-200:#e5e7eb;
-    --gray-300:#d1d5db;
-    --gray-500:#6b7280;
-    --gray-700:#374151;
-
-    --radius:16px;
-
-    --shadow:0 8px 25px rgba(0,0,0,.08);
-
-    --transition:.3s ease;
-}
-
 *{
-    margin:0;
-    padding:0;
-    box-sizing:border-box;
-}
-
-html{
-    scroll-behavior:smooth;
+margin:0;
+padding:0;
+box-sizing:border-box;
+font-family:Poppins,sans-serif;
 }
 
 body{
 
-    font-family:Arial,Helvetica,sans-serif;
+background:#f8f8f8;
 
-    background:var(--gray-100);
+color:#222;
 
-    color:var(--black);
-
-    min-height:100vh;
+overflow-x:hidden;
 
 }
 
 a{
-    text-decoration:none;
-    color:inherit;
+
+text-decoration:none;
+
+color:inherit;
+
 }
 
 img{
-    width:100%;
-    display:block;
-}
 
-button{
+max-width:100%;
 
-    cursor:pointer;
-
-    border:none;
-
-    outline:none;
-
-    transition:var(--transition);
-
-}
-
-input{
-
-    border:none;
-
-    outline:none;
+display:block;
 
 }
 
 .container{
 
-    width:100%;
-
-    max-width:1300px;
-
-    margin:auto;
-
-    padding:16px;
+padding:15px;
 
 }
 
-.card{
+.section-title{
 
-    background:#fff;
+font-size:22px;
 
-    border-radius:var(--radius);
+font-weight:700;
 
-    box-shadow:var(--shadow);
+margin:20px 0 15px;
 
-    overflow:hidden;
+color:#222;
 
 }
 
-.btn{
+/* Header */
 
-    width:100%;
+header{
 
-    padding:
+background:#16a34a;
+
+padding:15px;
+
+color:#fff;
+
+position:sticky;
+
+top:0;
+
+z-index:999;
+
+box-shadow:0 3px 15px rgba(0,0,0,.15);
+
+}
+
+.top-header{
+
+display:flex;
+
+justify-content:space-between;
+
+align-items:center;
+
+}
+
+.logo{
+
+font-size:28px;
+
+font-weight:800;
+
+}
+
+.search-box{
+
+margin-top:15px;
+
+}
+
+.search-box input{
+
+width:100%;
+
+padding:14px;
+
+border:none;
+
+outline:none;
+
+border-radius:12px;
+
+font-size:16px;
+
+}
+
+/* Banner */
+
+.banner{
+
+padding:15px;
+
+}
+
+.banner img{
+
+width:100%;
+
+border-radius:16px;
+
+}
+
+/* Category */
+
+.category-grid{
+
+display:grid;
+
+grid-template-columns:repeat(4,1fr);
+
+gap:15px;
+
+}
+
+.category{
+
+background:#fff;
+
+border-radius:18px;
+
+padding:15px;
+
+text-align:center;
+
+box-shadow:0 5px 18px rgba(0,0,0,.08);
+
+transition:.3s;
+
+}
+
+.category:hover{
+
+transform:translateY(-4px);
+
+}
+
+.category img{
+
+width:60px;
+
+height:60px;
+
+margin:auto;
+
+}
+
+.category p{
+
+margin-top:10px;
+
+font-size:14px;
+
+font-weight:600;
+
+}    padding:
